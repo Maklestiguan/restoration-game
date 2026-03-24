@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/item_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/resources/damage_layer.gd" id="2"]
+[ext_resource type="Texture2D" path="res://assets/sprites/items/cracked_frame_clean.png" id="3"]
+
+[sub_resource type="Resource" id="layer_cracks"]
+script = ExtResource("2")
+damage_type_id = "cracks"
+intensity = 0.7
+overlay_offset = Vector2(0, 0)
+overlay_scale = 1.0
+
+[sub_resource type="Resource" id="layer_dust"]
+script = ExtResource("2")
+damage_type_id = "dust"
+intensity = 0.6
+overlay_offset = Vector2(0.4, 0.2)
+overlay_scale = 1.0
+
+[resource]
+script = ExtResource("1")
+id = "cracked_frame"
+display_name = "Cracked Frame"
+description = "A wooden photo frame with cracks."
+rarity = 0
+category = "everyday"
+clean_texture = ExtResource("3")
+base_reward = 70.0
+damage_layers = [SubResource("layer_cracks"), SubResource("layer_dust")]
+required_tier = 1

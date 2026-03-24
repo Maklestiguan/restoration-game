@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="DamageTypeData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/damage_type_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/damage/cracks_overlay.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = "cracks"
+overlay_texture = ExtResource("2")
+display_name = "Cracks"
+color = Color(0.2, 0.18, 0.15, 1)
+effective_tool_ids = ["chisel", "solvent"]
+resistance = 2.0

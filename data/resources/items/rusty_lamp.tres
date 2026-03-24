@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/item_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/resources/damage_layer.gd" id="2"]
+[ext_resource type="Texture2D" path="res://assets/sprites/items/rusty_lamp_clean.png" id="3"]
+
+[sub_resource type="Resource" id="layer_rust"]
+script = ExtResource("2")
+damage_type_id = "rust"
+intensity = 1.0
+overlay_offset = Vector2(0, 0)
+overlay_scale = 1.0
+
+[sub_resource type="Resource" id="layer_grime"]
+script = ExtResource("2")
+damage_type_id = "grime"
+intensity = 0.6
+overlay_offset = Vector2(0.1, 0.3)
+overlay_scale = 1.1
+
+[resource]
+script = ExtResource("1")
+id = "rusty_lamp"
+display_name = "Rusty Lamp"
+description = "A copper desk lamp covered in rust."
+rarity = 0
+category = "everyday"
+clean_texture = ExtResource("3")
+base_reward = 90.0
+damage_layers = [SubResource("layer_rust"), SubResource("layer_grime")]
+required_tier = 1

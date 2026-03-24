@@ -1,0 +1,45 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scenes/ui/item_complete_popup.gd" id="1"]
+
+[node name="ItemCompletePopup" type="PanelContainer"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -130.0
+offset_right = 200.0
+offset_bottom = 130.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="VBox" type="VBoxContainer" parent="."]
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="VBox"]
+text = "RESTORED!"
+horizontal_alignment = 1
+
+[node name="ItemNameLabel" type="Label" parent="VBox"]
+text = "Old Clock"
+horizontal_alignment = 1
+
+[node name="RewardLabel" type="Label" parent="VBox"]
+text = "$100"
+horizontal_alignment = 1
+
+[node name="MasterworkLabel" type="Label" parent="VBox"]
+visible = false
+text = "MASTER'S TOUCH! x2"
+horizontal_alignment = 1
+
+[node name="Spacer" type="Control" parent="VBox"]
+custom_minimum_size = Vector2(0, 10)
+
+[node name="NextButton" type="Button" parent="VBox"]
+custom_minimum_size = Vector2(200, 45)
+text = "Next Item"

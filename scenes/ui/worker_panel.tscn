@@ -1,0 +1,29 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scenes/ui/worker_panel.gd" id="1"]
+
+[node name="Workers" type="VBoxContainer"]
+script = ExtResource("1")
+
+[node name="Header" type="Label" parent="."]
+text = "WORKERS"
+horizontal_alignment = 1
+
+[node name="Spacer1" type="Control" parent="."]
+custom_minimum_size = Vector2(0, 8)
+
+[node name="CountLabel" type="Label" parent="."]
+text = "Students hired: 0"
+
+[node name="SpeedLabel" type="Label" parent="."]
+text = "Income: $0/min"
+
+[node name="CostLabel" type="Label" parent="."]
+text = "Next: $500"
+
+[node name="Spacer2" type="Control" parent="."]
+custom_minimum_size = Vector2(0, 8)
+
+[node name="HireButton" type="Button" parent="."]
+custom_minimum_size = Vector2(200, 45)
+text = "Hire Student"

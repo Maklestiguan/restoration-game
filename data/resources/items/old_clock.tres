@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/item_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/resources/damage_layer.gd" id="2"]
+[ext_resource type="Texture2D" path="res://assets/sprites/items/old_clock_clean.png" id="3"]
+
+[sub_resource type="Resource" id="layer_rust"]
+script = ExtResource("2")
+damage_type_id = "rust"
+intensity = 0.8
+overlay_offset = Vector2(0, 0)
+overlay_scale = 1.0
+
+[sub_resource type="Resource" id="layer_dust"]
+script = ExtResource("2")
+damage_type_id = "dust"
+intensity = 0.5
+overlay_offset = Vector2(0.3, 0.1)
+overlay_scale = 1.2
+
+[resource]
+script = ExtResource("1")
+id = "old_clock"
+display_name = "Old Clock"
+description = "A 19th century wall clock with a brass mechanism."
+rarity = 0
+category = "antique"
+clean_texture = ExtResource("3")
+base_reward = 100.0
+damage_layers = [SubResource("layer_rust"), SubResource("layer_dust")]
+required_tier = 1

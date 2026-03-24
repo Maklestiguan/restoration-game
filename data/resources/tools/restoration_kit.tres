@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ToolData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/tool_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "restoration_kit"
+display_name = "Restoration Kit"
+base_strength = 1.0
+base_radius = 24
+effective_against = ["rust", "dust", "cracks", "grime"]
+ineffective_against = []
+upgrade_cost_base = 100.0
+upgrade_cost_scaling = 1.5
+strength_per_level = 0.25
+radius_per_level = 3
+max_level = 50

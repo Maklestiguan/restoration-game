@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemPool" load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/item_pool.gd" id="1"]
+[ext_resource type="Resource" path="res://data/resources/items/old_clock.tres" id="2"]
+[ext_resource type="Resource" path="res://data/resources/items/dusty_vase.tres" id="3"]
+[ext_resource type="Resource" path="res://data/resources/items/rusty_lamp.tres" id="4"]
+[ext_resource type="Resource" path="res://data/resources/items/cracked_frame.tres" id="5"]
+[ext_resource type="Resource" path="res://data/resources/items/ornate_box.tres" id="6"]
+
+[resource]
+script = ExtResource("1")
+tier_1_items = [ExtResource("2"), ExtResource("3"), ExtResource("4"), ExtResource("5"), ExtResource("6")]
+tier_2_items = []
+rarity_weight_common = 60.0
+rarity_weight_uncommon = 25.0
+rarity_weight_rare = 10.0
+rarity_weight_epic = 4.0
+rarity_weight_legendary = 1.0

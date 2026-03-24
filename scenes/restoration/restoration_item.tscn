@@ -1,0 +1,47 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scenes/restoration/restoration_item.gd" id="1_item"]
+[ext_resource type="Script" path="res://scenes/restoration/brush_preview.gd" id="2_brush"]
+
+[node name="RestorationItem" type="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+script = ExtResource("1_item")
+
+[node name="CleanSprite" type="Sprite2D" parent="."]
+
+[node name="DamageLayerContainer" type="Node2D" parent="."]
+
+[node name="ProgressBar" type="ProgressBar" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -24.0
+grow_horizontal = 2
+grow_vertical = 0
+min_value = 0.0
+max_value = 100.0
+value = 0.0
+show_percentage = true
+
+[node name="BrushPreview" type="Node2D" parent="."]
+visible = false
+script = ExtResource("2_brush")
+
+[node name="ItemArea" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[connection signal="mouse_exited" from="." to="." method="_mouse_exited"]
