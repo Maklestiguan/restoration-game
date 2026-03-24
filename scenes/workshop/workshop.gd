@@ -31,8 +31,9 @@ func _spawn_next_item() -> void:
 	item_container.add_child(restoration_item)
 	restoration_item.setup_item(item_data)
 
-	# Обновляем название
-	item_name_label.text = item_data.display_name
+	# Обновляем название с звёздами сложности
+	var stars := "★".repeat(item_data.get_difficulty())
+	item_name_label.text = "%s  %s" % [item_data.display_name, stars]
 	_update_rarity_color(item_data.rarity)
 
 
@@ -43,6 +44,23 @@ func _on_item_restored(_item: Resource, _reward: float, _masterwork: bool) -> vo
 
 func request_next_item() -> void:
 	_spawn_next_item()
+
+
+func load_specific_item(item_data: ItemData) -> void:
+	## Загружает конкретный предмет (для квестов прогрессии).
+	if restoration_item:
+		restoration_item.queue_free()
+		restoration_item = null
+
+	GameManager.current_item = item_data
+
+	restoration_item = RestorationItemScene.instantiate()
+	item_container.add_child(restoration_item)
+	restoration_item.setup_item(item_data)
+
+	var stars := "★".repeat(item_data.get_difficulty())
+	item_name_label.text = "%s  %s" % [item_data.display_name, stars]
+	_update_rarity_color(item_data.rarity)
 
 
 func _update_rarity_color(rarity: int) -> void:

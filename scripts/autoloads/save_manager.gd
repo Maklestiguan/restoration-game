@@ -30,6 +30,11 @@ func save_game() -> void:
 	data.tool_levels = GameManager.tool_levels.duplicate()
 	data.current_tier = GameManager.current_tier
 	data.unlocked_categories = GameManager.unlocked_item_categories.duplicate()
+	data.has_cat = GameManager.has_cat
+	data.cat_level = GameManager.cat_level
+	data.piggy_bank_balance = GameManager.piggy_bank_balance
+	data.piggy_bank_deposit_time = GameManager.piggy_bank_deposit_time
+	data.piggy_bank_deposited = GameManager.piggy_bank_deposited
 
 	# Save worker count (one entry per worker)
 	data.hired_worker_ids = []
@@ -67,6 +72,15 @@ func load_game() -> bool:
 	GameManager.tool_levels = data.tool_levels.duplicate()
 	GameManager.current_tier = data.current_tier
 	GameManager.unlocked_item_categories = data.unlocked_categories.duplicate()
+	GameManager.has_cat = data.has_cat
+	GameManager.cat_level = data.cat_level
+	GameManager.piggy_bank_balance = data.piggy_bank_balance
+	GameManager.piggy_bank_deposit_time = data.piggy_bank_deposit_time
+	GameManager.piggy_bank_deposited = data.piggy_bank_deposited
+
+	# Activate cat if owned
+	if GameManager.has_cat:
+		call_deferred("_activate_cat")
 
 	# Restore worker count (each entry = one worker)
 	GameManager.hired_workers.clear()
@@ -78,9 +92,27 @@ func load_game() -> bool:
 	if offline_seconds > 60.0:
 		_calculate_offline_earnings(offline_seconds)
 
+	# Обновляем весь UI — сигналы для каждой подсистемы
 	Events.money_changed.emit(GameManager.money)
+
+	# Обновляем отображение инструментов
+	for tool_res in GameManager.all_tools:
+		var level: int = GameManager.get_tool_level(tool_res.id)
+		Events.tool_upgraded.emit(tool_res, level)
+
+	# Обновляем отображение работников (один сигнал чтобы обновить панель)
+	if not GameManager.hired_workers.is_empty():
+		Events.worker_hired.emit(null)
+
 	Events.game_loaded.emit()
 	return true
+
+
+func _activate_cat() -> void:
+	var cat_node := get_tree().get_first_node_in_group("cat")
+	if cat_node:
+		cat_node.activate()
+		cat_node.cat_level = GameManager.cat_level
 
 
 func _calculate_offline_earnings(seconds: float) -> void:
@@ -92,11 +124,19 @@ func _calculate_offline_earnings(seconds: float) -> void:
 	seconds = minf(seconds, config.max_offline_seconds)
 
 	var total_earnings := 0.0
+
+	# Worker income
 	var worker_count := GameManager.hired_workers.size()
 	if worker_count > 0:
-		var income_per_min: float = config.worker_income_per_min
-		var income_per_sec := float(worker_count) * income_per_min / 60.0
-		total_earnings = income_per_sec * seconds * config.offline_efficiency
+		var cat_mult: float = GameManager.get_worker_income_multiplier()
+		var income_per_sec: float = float(worker_count) * config.worker_income_per_min / 60.0 * cat_mult
+		total_earnings += income_per_sec * seconds * config.offline_efficiency
+
+	# Investment income
+	var InvestmentsPanel := preload("res://scenes/ui/investments_panel.gd")
+	var invest_per_min: float = InvestmentsPanel.get_total_investment_income()
+	if invest_per_min > 0:
+		total_earnings += invest_per_min / 60.0 * seconds * config.offline_efficiency
 
 	if total_earnings > 0:
 		GameManager.add_money(total_earnings, "offline")

@@ -1,0 +1,49 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/item_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/resources/damage_layer.gd" id="2"]
+[ext_resource type="Texture2D" path="res://assets/sprites/items/aztec_mask_clean.png" id="3"]
+
+[sub_resource type="Resource" id="layer_rust"]
+script = ExtResource("2")
+damage_type_id = "rust"
+intensity = 0.7
+overlay_offset = Vector2(0, 0)
+overlay_scale = 1.0
+depth = 2
+
+[sub_resource type="Resource" id="layer_dust"]
+script = ExtResource("2")
+damage_type_id = "dust"
+intensity = 0.6
+overlay_offset = Vector2(0.4, 0.1)
+overlay_scale = 1.0
+depth = 2
+
+[sub_resource type="Resource" id="layer_cracks"]
+script = ExtResource("2")
+damage_type_id = "cracks"
+intensity = 0.9
+overlay_offset = Vector2(0.2, 0.4)
+overlay_scale = 1.0
+depth = 3
+
+[sub_resource type="Resource" id="layer_grime"]
+script = ExtResource("2")
+damage_type_id = "grime"
+intensity = 0.6
+overlay_offset = Vector2(0.1, 0.3)
+overlay_scale = 1.0
+depth = 2
+
+[resource]
+script = ExtResource("1")
+id = "aztec_mask"
+display_name = "Aztec Mask"
+description = "A ceremonial Aztec stone mask."
+rarity = 2
+category = "antique"
+clean_texture = ExtResource("3")
+base_reward = 650.0
+damage_layers = [SubResource("layer_rust"), SubResource("layer_dust"), SubResource("layer_cracks"), SubResource("layer_grime")]
+required_tier = 1

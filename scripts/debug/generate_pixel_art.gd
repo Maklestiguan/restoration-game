@@ -17,7 +17,23 @@ func _generate_items() -> void:
 	_save_png("res://assets/sprites/items/rusty_lamp_clean.png", _draw_lamp())
 	_save_png("res://assets/sprites/items/cracked_frame_clean.png", _draw_frame())
 	_save_png("res://assets/sprites/items/ornate_box_clean.png", _draw_box())
-	print("  Предметы: 5 файлов")
+	# Новые предметы
+	_save_png("res://assets/sprites/items/tarnished_mirror_clean.png", _draw_mirror())
+	_save_png("res://assets/sprites/items/dirty_keyboard_clean.png", _draw_keyboard())
+	_save_png("res://assets/sprites/items/rusty_toolbox_clean.png", _draw_toolbox())
+	_save_png("res://assets/sprites/items/old_radio_clean.png", _draw_radio())
+	_save_png("res://assets/sprites/items/worn_book_clean.png", _draw_book())
+	_save_png("res://assets/sprites/items/dusty_globe_clean.png", _draw_globe())
+	_save_png("res://assets/sprites/items/bronze_statue_clean.png", _draw_statue())
+	_save_png("res://assets/sprites/items/vintage_camera_clean.png", _draw_camera())
+	_save_png("res://assets/sprites/items/war_medal_clean.png", _draw_medal())
+	_save_png("res://assets/sprites/items/antique_telescope_clean.png", _draw_telescope())
+	_save_png("res://assets/sprites/items/egyptian_scarab_clean.png", _draw_scarab())
+	_save_png("res://assets/sprites/items/aztec_mask_clean.png", _draw_aztec_mask())
+	_save_png("res://assets/sprites/items/grand_piano_clean.png", _draw_piano())
+	_save_png("res://assets/sprites/items/samurai_armor_clean.png", _draw_samurai())
+	_save_png("res://assets/sprites/items/greek_amphora_clean.png", _draw_amphora())
+	print("  Предметы: 20 файлов")
 
 
 func _generate_damage_overlays() -> void:
@@ -218,6 +234,346 @@ func _draw_box() -> Image:
 	_fill_rect(img, 25, 32, 12, 6, brass)
 	_fill_rect(img, 91, 32, 12, 6, brass)
 
+	return img
+
+
+# === НОВЫЕ ПРЕДМЕТЫ ===
+
+func _draw_mirror() -> Image:
+	var img := _create_blank()
+	# Овальное зеркало в раме
+	_fill_ellipse(img, 64, 64, 58, 62, Color(0.5, 0.35, 0.2))  # рама
+	_fill_ellipse(img, 64, 64, 52, 56, Color(0.75, 0.82, 0.88))  # стекло
+	_fill_ellipse(img, 50, 50, 20, 24, Color(0.85, 0.9, 0.95, 0.5))  # блик
+	# Ручка снизу
+	_fill_rect(img, 60, 120, 8, 8, Color(0.5, 0.35, 0.2))
+	return img
+
+
+func _draw_keyboard() -> Image:
+	var img := _create_blank()
+	var body := Color(0.25, 0.25, 0.28)
+	var key := Color(0.85, 0.83, 0.8)
+	var key_dark := Color(0.6, 0.58, 0.55)
+	# Корпус
+	_fill_rect(img, 4, 30, 120, 80, body)
+	_fill_rect(img, 4, 30, 120, 3, Color(0.35, 0.35, 0.38))
+	# Ряды клавиш
+	for row in 5:
+		for col in 12:
+			var kx := 10 + col * 9
+			var ky := 38 + row * 14
+			if kx + 7 > 120:
+				continue
+			_fill_rect(img, kx, ky, 7, 10, key)
+			_fill_rect(img, kx, ky + 8, 7, 2, key_dark)
+	# Пробел
+	_fill_rect(img, 30, 108 - 10, 60, 10, key)
+	return img
+
+
+func _draw_toolbox() -> Image:
+	var img := _create_blank()
+	var metal := Color(0.55, 0.5, 0.48)
+	var metal_dark := Color(0.4, 0.35, 0.32)
+	var red := Color(0.7, 0.2, 0.15)
+	# Корпус
+	_fill_rect(img, 8, 35, 112, 75, red)
+	_fill_rect(img, 8, 35, 112, 4, metal)
+	_fill_rect(img, 8, 106, 112, 4, metal)
+	# Ручка
+	_fill_rect(img, 45, 20, 38, 8, metal_dark)
+	_fill_rect(img, 45, 20, 38, 3, metal)
+	_fill_rect(img, 45, 20, 4, 18, metal)
+	_fill_rect(img, 79, 20, 4, 18, metal)
+	# Замок
+	_fill_rect(img, 56, 33, 16, 8, metal)
+	_fill_rect(img, 60, 35, 8, 4, metal_dark)
+	return img
+
+
+func _draw_radio() -> Image:
+	var img := _create_blank()
+	var wood := Color(0.5, 0.33, 0.18)
+	var wood_dark := Color(0.35, 0.22, 0.1)
+	# Корпус
+	_fill_rect(img, 6, 20, 116, 95, wood)
+	_fill_rect(img, 6, 20, 116, 4, wood_dark)
+	# Шкала
+	_fill_rect(img, 14, 30, 100, 30, Color(0.9, 0.88, 0.8))
+	_fill_rect(img, 14, 30, 100, 2, Color(0.6, 0.5, 0.3))
+	# Линии шкалы
+	for x_off in range(20, 110, 6):
+		_fill_rect(img, x_off, 45, 1, 10, Color(0.3, 0.25, 0.2))
+	# Динамик (сетка)
+	for y_off in range(68, 105, 4):
+		_fill_rect(img, 14, y_off, 100, 2, wood_dark)
+	# Ручки
+	_fill_circle(img, 35, 107, 6, Color(0.65, 0.55, 0.25))
+	_fill_circle(img, 93, 107, 6, Color(0.65, 0.55, 0.25))
+	return img
+
+
+func _draw_book() -> Image:
+	var img := _create_blank()
+	var cover := Color(0.4, 0.15, 0.12)
+	var page := Color(0.95, 0.92, 0.85)
+	# Обложка
+	_fill_rect(img, 20, 8, 88, 112, cover)
+	# Корешок
+	_fill_rect(img, 20, 8, 12, 112, Color(0.3, 0.1, 0.08))
+	# Страницы (видны сбоку)
+	_fill_rect(img, 32, 14, 70, 100, page)
+	_fill_rect(img, 32, 14, 70, 2, Color(0.8, 0.78, 0.7))
+	# Заголовок
+	_fill_rect(img, 45, 35, 45, 6, Color(0.8, 0.7, 0.3))
+	_fill_rect(img, 50, 48, 35, 4, Color(0.8, 0.7, 0.3))
+	# Орнамент
+	_draw_rect_outline(img, 38, 25, 56, 70, Color(0.8, 0.7, 0.3), 2)
+	return img
+
+
+func _draw_globe() -> Image:
+	var img := _create_blank()
+	var ocean := Color(0.25, 0.45, 0.7)
+	var land := Color(0.4, 0.6, 0.3)
+	# Глобус
+	_fill_circle(img, 64, 55, 50, ocean)
+	# Континенты (условные пятна)
+	_fill_ellipse(img, 45, 40, 15, 20, land)
+	_fill_ellipse(img, 75, 50, 12, 18, land)
+	_fill_ellipse(img, 55, 70, 18, 10, land)
+	# Линии меридианов
+	_draw_circle_outline(img, 64, 55, 50, Color(0.2, 0.35, 0.6), 2)
+	# Подставка
+	_fill_rect(img, 58, 105, 12, 15, Color(0.5, 0.35, 0.2))
+	_fill_ellipse(img, 64, 122, 22, 6, Color(0.45, 0.3, 0.18))
+	return img
+
+
+func _draw_statue() -> Image:
+	var img := _create_blank()
+	var bronze := Color(0.6, 0.45, 0.2)
+	var bronze_dark := Color(0.45, 0.32, 0.12)
+	# Голова
+	_fill_circle(img, 64, 22, 16, bronze)
+	# Торс
+	_fill_rect(img, 48, 38, 32, 30, bronze)
+	_fill_rect(img, 48, 38, 8, 30, bronze_dark)
+	# Руки
+	_fill_rect(img, 36, 40, 12, 24, bronze)
+	_fill_rect(img, 80, 40, 12, 24, bronze)
+	# Ноги
+	_fill_rect(img, 50, 68, 12, 30, bronze)
+	_fill_rect(img, 66, 68, 12, 30, bronze)
+	# Подставка
+	_fill_rect(img, 34, 98, 60, 12, bronze_dark)
+	_fill_rect(img, 30, 110, 68, 10, Color(0.35, 0.25, 0.15))
+	return img
+
+
+func _draw_camera() -> Image:
+	var img := _create_blank()
+	var body := Color(0.2, 0.2, 0.22)
+	var chrome := Color(0.7, 0.7, 0.72)
+	# Корпус
+	_fill_rect(img, 12, 35, 104, 65, body)
+	# Верхняя часть (горб для призмы)
+	_fill_rect(img, 35, 20, 45, 18, body)
+	# Объектив
+	_fill_circle(img, 64, 68, 22, Color(0.15, 0.15, 0.18))
+	_fill_circle(img, 64, 68, 18, Color(0.1, 0.12, 0.2))
+	_fill_circle(img, 64, 68, 12, Color(0.2, 0.25, 0.4))
+	_fill_circle(img, 60, 62, 4, Color(0.4, 0.5, 0.7, 0.5))  # блик
+	# Видоискатель
+	_fill_rect(img, 48, 22, 18, 12, chrome)
+	# Кнопка
+	_fill_rect(img, 85, 28, 12, 8, chrome)
+	return img
+
+
+func _draw_medal() -> Image:
+	var img := _create_blank()
+	var gold := Color(0.85, 0.7, 0.25)
+	var gold_dark := Color(0.65, 0.5, 0.15)
+	var ribbon := Color(0.6, 0.15, 0.15)
+	# Лента
+	_fill_rect(img, 44, 4, 40, 35, ribbon)
+	_fill_rect(img, 44, 4, 12, 35, Color(0.7, 0.2, 0.2))
+	_fill_rect(img, 72, 4, 12, 35, Color(0.5, 0.1, 0.1))
+	# Медаль (круглая)
+	_fill_circle(img, 64, 72, 38, gold)
+	_draw_circle_outline(img, 64, 72, 38, gold_dark, 3)
+	# Звезда в центре
+	_fill_circle(img, 64, 72, 12, gold_dark)
+	_fill_circle(img, 64, 72, 8, gold)
+	# Лучи
+	for i in 8:
+		var angle := float(i) / 8.0 * TAU
+		var ex := 64 + int(cos(angle) * 28)
+		var ey := 72 + int(sin(angle) * 28)
+		_draw_line(img, 64, 72, ex, ey, gold_dark, 2)
+	return img
+
+
+func _draw_telescope() -> Image:
+	var img := _create_blank()
+	var brass := Color(0.7, 0.55, 0.2)
+	var brass_dark := Color(0.5, 0.38, 0.12)
+	# Труба (наклонная)
+	for i in 80:
+		var t := float(i) / 80.0
+		var x := int(lerpf(15, 110, t))
+		var y := int(lerpf(85, 20, t))
+		var r := int(lerpf(8, 14, t))
+		_fill_circle(img, x, y, r, brass)
+		_fill_circle(img, x - 2, y, r - 1, brass_dark)
+	# Линза
+	_fill_circle(img, 110, 20, 16, Color(0.3, 0.4, 0.6))
+	_draw_circle_outline(img, 110, 20, 16, brass, 3)
+	# Тренога
+	_draw_line(img, 55, 60, 35, 120, brass_dark, 3)
+	_draw_line(img, 55, 60, 75, 120, brass_dark, 3)
+	_draw_line(img, 55, 60, 55, 122, brass_dark, 3)
+	return img
+
+
+func _draw_scarab() -> Image:
+	var img := _create_blank()
+	var turquoise := Color(0.2, 0.6, 0.6)
+	var gold := Color(0.8, 0.65, 0.2)
+	# Тело жука
+	_fill_ellipse(img, 64, 64, 40, 50, turquoise)
+	# Голова
+	_fill_circle(img, 64, 20, 18, turquoise.darkened(0.2))
+	# Крылья (линия по центру)
+	_fill_rect(img, 62, 30, 4, 70, gold)
+	# Поперечные полосы
+	_fill_rect(img, 30, 45, 68, 3, gold)
+	_fill_rect(img, 35, 65, 58, 3, gold)
+	_fill_rect(img, 38, 85, 52, 3, gold)
+	# Глаза
+	_fill_circle(img, 54, 16, 4, gold)
+	_fill_circle(img, 74, 16, 4, gold)
+	# Лапки
+	_draw_line(img, 30, 50, 10, 40, turquoise.darkened(0.3), 3)
+	_draw_line(img, 98, 50, 118, 40, turquoise.darkened(0.3), 3)
+	_draw_line(img, 28, 70, 8, 75, turquoise.darkened(0.3), 3)
+	_draw_line(img, 100, 70, 120, 75, turquoise.darkened(0.3), 3)
+	return img
+
+
+func _draw_aztec_mask() -> Image:
+	var img := _create_blank()
+	var stone := Color(0.55, 0.5, 0.4)
+	var jade := Color(0.3, 0.6, 0.35)
+	var red := Color(0.7, 0.2, 0.15)
+	# Форма маски
+	_fill_ellipse(img, 64, 58, 52, 58, stone)
+	# Глаза (прямоугольные)
+	_fill_rect(img, 32, 42, 22, 14, Color(0.1, 0.1, 0.1))
+	_fill_rect(img, 74, 42, 22, 14, Color(0.1, 0.1, 0.1))
+	_fill_circle(img, 43, 49, 5, jade)
+	_fill_circle(img, 85, 49, 5, jade)
+	# Нос
+	_fill_rect(img, 58, 55, 12, 20, stone.darkened(0.15))
+	# Рот
+	_fill_rect(img, 38, 82, 52, 12, Color(0.15, 0.1, 0.1))
+	# Зубы
+	for tx in range(40, 88, 8):
+		_fill_rect(img, tx, 82, 6, 6, Color(0.9, 0.85, 0.75))
+	# Головной убор (перья)
+	for i in 7:
+		var fx := 20 + i * 14
+		_fill_rect(img, fx, 2, 6, 20, [jade, red, jade, red, jade, red, jade][i])
+	# Орнамент
+	_draw_rect_outline(img, 20, 30, 88, 80, jade, 2)
+	return img
+
+
+func _draw_piano() -> Image:
+	var img := _create_blank()
+	var black := Color(0.08, 0.07, 0.06)
+	var white_key := Color(0.95, 0.93, 0.88)
+	# Корпус (вид сверху, стилизованный)
+	_fill_rect(img, 4, 4, 120, 120, black)
+	_fill_rect(img, 4, 4, 120, 6, Color(0.15, 0.13, 0.1))
+	# Белые клавиши
+	for i in 14:
+		_fill_rect(img, 8 + i * 8, 30, 7, 85, white_key)
+	# Чёрные клавиши
+	for i in [1, 2, 4, 5, 6, 8, 9, 11, 12]:
+		_fill_rect(img, 12 + i * 8, 30, 5, 50, black)
+	# Педали (внизу)
+	_fill_rect(img, 45, 118, 10, 6, Color(0.65, 0.55, 0.2))
+	_fill_rect(img, 60, 118, 10, 6, Color(0.65, 0.55, 0.2))
+	_fill_rect(img, 75, 118, 10, 6, Color(0.65, 0.55, 0.2))
+	return img
+
+
+func _draw_samurai() -> Image:
+	var img := _create_blank()
+	var iron := Color(0.35, 0.33, 0.3)
+	var iron_light := Color(0.5, 0.48, 0.45)
+	var red_lace := Color(0.6, 0.15, 0.1)
+	var gold := Color(0.75, 0.6, 0.2)
+	# Шлем (кабуто)
+	_fill_ellipse(img, 64, 20, 30, 20, iron)
+	_fill_rect(img, 34, 20, 60, 8, iron_light)  # козырёк
+	# Маска (менпо)
+	_fill_rect(img, 44, 30, 40, 15, iron)
+	# Нагрудник (до)
+	_fill_rect(img, 30, 45, 68, 40, iron)
+	# Шнуровка
+	for y_off in range(48, 82, 6):
+		_fill_rect(img, 32, y_off, 64, 3, red_lace)
+	# Наплечники (содэ)
+	_fill_rect(img, 10, 45, 22, 30, iron_light)
+	_fill_rect(img, 96, 45, 22, 30, iron_light)
+	# Юбка (кусадзури)
+	for i in 5:
+		_fill_rect(img, 28 + i * 14, 85, 12, 25, iron)
+		_fill_rect(img, 28 + i * 14, 85, 12, 3, red_lace)
+	# Герб (мон)
+	_fill_circle(img, 64, 62, 8, gold)
+	return img
+
+
+func _draw_amphora() -> Image:
+	var img := _create_blank()
+	var clay := Color(0.72, 0.45, 0.25)
+	var clay_dark := Color(0.55, 0.32, 0.15)
+	var pattern := Color(0.2, 0.15, 0.1)
+	var cx := 64
+	# Горловина
+	_fill_ellipse(img, cx, 6, 16, 6, clay)
+	# Шейка
+	for y in range(10, 25):
+		var w: int = int(lerpf(14, 24, float(y - 10) / 15.0))
+		_fill_rect(img, cx - w, y, w * 2, 1, clay)
+	# Ручки
+	_fill_ellipse(img, 28, 30, 10, 18, clay_dark)
+	_fill_ellipse(img, 28, 30, 6, 14, Color(0, 0, 0, 0))
+	_fill_ellipse(img, 100, 30, 10, 18, clay_dark)
+	_fill_ellipse(img, 100, 30, 6, 14, Color(0, 0, 0, 0))
+	# Тело
+	for y in range(25, 118):
+		var t := float(y - 25) / 93.0
+		var w: int
+		if t < 0.5:
+			w = int(lerpf(24, 50, t / 0.5))
+		else:
+			w = int(lerpf(50, 18, (t - 0.5) / 0.5))
+		_fill_rect(img, cx - w, y, w * 2, 1, clay)
+		img.set_pixel(clampi(cx - w, 0, 127), y, clay_dark)
+	# Подставка
+	_fill_ellipse(img, cx, 120, 20, 6, clay_dark)
+	# Греческий орнамент (меандр)
+	for x_off in range(cx - 40, cx + 40, 8):
+		if x_off >= 0 and x_off < 128:
+			_fill_rect(img, x_off, 55, 6, 2, pattern)
+			_fill_rect(img, x_off, 57, 2, 6, pattern)
+			_fill_rect(img, x_off, 75, 6, 2, pattern)
 	return img
 
 

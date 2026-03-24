@@ -8,8 +8,8 @@ const DAMAGE_SHADER := preload("res://shaders/damage_reveal.gdshader")
 # Размер текстуры предмета (и масок) — 128x128 для пиксель-арта
 const ITEM_SIZE := Vector2i(128, 128)
 
-# Размер отображения — фиксированный, совпадает с контейнером в workshop.tscn
-const DISPLAY_SIZE := 526.0
+# Размер отображения — фиксированный квадрат внутри контейнера
+const DISPLAY_SIZE := 400.0
 var display_scale := Vector2(DISPLAY_SIZE / 128.0, DISPLAY_SIZE / 128.0)
 
 # Текущий предмет
@@ -23,6 +23,8 @@ var mask_images: Dictionary = {}      # damage_type_id -> Image
 var mask_textures: Dictionary = {}    # damage_type_id -> ImageTexture
 var damage_sprites: Dictionary = {}   # damage_type_id -> Sprite2D
 var damage_remaining: Dictionary = {} # damage_type_id -> float (0.0 - 1.0)
+var damage_depths: Dictionary = {}    # damage_type_id -> int (1-5, глубина слоя)
+var sweep_floors: Dictionary = {}     # damage_type_id -> Image (порог текущего прохода)
 
 # Форма предмета (альфа-канал чистой текстуры) — для проверки где рисовать
 var item_shape: Image = null
@@ -53,7 +55,6 @@ func setup_item(data: ItemData) -> void:
 	if current_tool == null and GameManager.all_tools.size() > 0:
 		current_tool = GameManager.all_tools[0]
 
-
 	# Очищаем предыдущие слои
 	for child in damage_layer_container.get_children():
 		child.queue_free()
@@ -61,6 +62,8 @@ func setup_item(data: ItemData) -> void:
 	mask_textures.clear()
 	damage_sprites.clear()
 	damage_remaining.clear()
+	damage_depths.clear()
+	sweep_floors.clear()
 
 	# Создаём текстуру чистого предмета
 	if data.clean_texture:
@@ -74,7 +77,7 @@ func setup_item(data: ItemData) -> void:
 		item_shape.resize(ITEM_SIZE.x, ITEM_SIZE.y)
 
 	# Центрируем и масштабируем предмет чтобы заполнить весь контейнер
-	var center := Vector2(DISPLAY_SIZE, DISPLAY_SIZE) / 2.0
+	var center := Vector2(DISPLAY_SIZE, DISPLAY_SIZE) / 2
 	clean_sprite.position = center
 	clean_sprite.scale = display_scale
 
@@ -103,7 +106,7 @@ func _setup_damage_layer(layer: DamageLayer) -> void:
 
 	# Создаём спрайт наложения повреждения
 	var sprite := Sprite2D.new()
-	var center := Vector2(DISPLAY_SIZE, DISPLAY_SIZE) / 2.0
+	var center := Vector2(DISPLAY_SIZE, DISPLAY_SIZE) / 2
 	sprite.position = center
 	sprite.scale = display_scale
 
@@ -125,6 +128,11 @@ func _setup_damage_layer(layer: DamageLayer) -> void:
 	damage_layer_container.add_child(sprite)
 	damage_sprites[layer.damage_type_id] = sprite
 	damage_remaining[layer.damage_type_id] = 1.0
+	damage_depths[layer.damage_type_id] = maxi(layer.depth, 1)
+	# Sweep floor: -1 означает "ещё не трогали в этом проходе"
+	var sf := Image.create(ITEM_SIZE.x, ITEM_SIZE.y, false, Image.FORMAT_RF)
+	sf.fill(Color(-1.0, 0, 0, 0))
+	sweep_floors[layer.damage_type_id] = sf
 
 
 func _on_tool_selected(tool_data: ToolData) -> void:
@@ -183,6 +191,10 @@ func _paint_at(pos: Vector2) -> void:
 		var damage_type := GameManager.get_damage_type(damage_type_id)
 		var resistance: float = damage_type.resistance if damage_type else 1.0
 
+		# Снижение сопротивления от оборудования
+		var EquipmentPanel := preload("res://scenes/ui/equipment_panel.gd")
+		resistance = maxf(resistance - EquipmentPanel.get_resistance_reduction(damage_type_id), 0.1)
+
 		# Получаем силу воздействия (с учётом сопротивления)
 		var removal_power: float = strength / resistance
 		if current_tool.ineffective_against.has(damage_type_id):
@@ -199,8 +211,11 @@ func _paint_at(pos: Vector2) -> void:
 
 func _paint_mask(damage_type_id: String, center: Vector2i, radius: int, removal_rate: float) -> void:
 	var mask: Image = mask_images[damage_type_id]
+	var sf: Image = sweep_floors[damage_type_id]
 	var stamp_size := brush_stamp.get_size()
 	var dst := center - Vector2i(stamp_size) / 2
+
+	var depth: int = damage_depths.get(damage_type_id, 1)
 
 	for x in range(stamp_size.x):
 		for y in range(stamp_size.y):
@@ -208,12 +223,23 @@ func _paint_mask(damage_type_id: String, center: Vector2i, radius: int, removal_
 			var my := dst.y + y
 			if mx < 0 or my < 0 or mx >= mask.get_width() or my >= mask.get_height():
 				continue
-			# Пропускаем прозрачные пиксели (вне формы предмета)
 			if item_shape and item_shape.get_pixel(mx, my).a < 0.1:
 				continue
 			var current_val := mask.get_pixel(mx, my).r
 			var brush_val := brush_stamp.get_pixel(x, y).r
-			var new_val := maxf(current_val - brush_val * removal_rate, 0.0)
+
+			# Берём порог из sweep floor — он фиксируется при первом касании
+			var stored_floor := sf.get_pixel(mx, my).r
+			var floor_val: float
+			if stored_floor < 0.0:
+				# Первое касание в этом проходе — вычисляем и запоминаем порог
+				var current_layer: int = int(current_val * float(depth) - 0.001)
+				floor_val = maxf(float(current_layer) / float(depth), 0.0)
+				sf.set_pixel(mx, my, Color(floor_val, 0, 0, 0))
+			else:
+				floor_val = stored_floor
+
+			var new_val := maxf(current_val - brush_val * removal_rate, floor_val)
 			mask.set_pixel(mx, my, Color(new_val, new_val, new_val, 1.0))
 
 	mask_textures[damage_type_id].update(mask)
@@ -323,6 +349,14 @@ func _update_brush_preview() -> void:
 func _mouse_exited() -> void:
 	brush_preview.visible = false
 	_mouse_inside = false
+	# Сбрасываем sweep floors — следующий вход = новый проход
+	_reset_sweep_floors()
+
+
+func _reset_sweep_floors() -> void:
+	for damage_type_id: String in sweep_floors:
+		var sf: Image = sweep_floors[damage_type_id]
+		sf.fill(Color(-1.0, 0, 0, 0))
 
 
 # --- Генерация заглушек текстур ---

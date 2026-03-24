@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=14 format=3]
 
 [ext_resource type="Script" path="res://scenes/ui/hud.gd" id="1_hud"]
 [ext_resource type="PackedScene" path="res://scenes/ui/money_display.tscn" id="2_money"]
@@ -6,6 +6,13 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/upgrade_panel.tscn" id="4_upgrades"]
 [ext_resource type="PackedScene" path="res://scenes/ui/worker_panel.tscn" id="5_workers"]
 [ext_resource type="PackedScene" path="res://scenes/ui/item_complete_popup.tscn" id="6_popup"]
+[ext_resource type="PackedScene" path="res://scenes/ui/stats_panel.tscn" id="7_stats"]
+[ext_resource type="PackedScene" path="res://scenes/ui/progression_panel.tscn" id="8_progression"]
+[ext_resource type="PackedScene" path="res://scenes/ui/cat_panel.tscn" id="9_cat"]
+[ext_resource type="PackedScene" path="res://scenes/ui/investments_panel.tscn" id="10_invest"]
+[ext_resource type="PackedScene" path="res://scenes/ui/settings_popup.tscn" id="11_settings"]
+[ext_resource type="PackedScene" path="res://scenes/ui/equipment_panel.tscn" id="12_equip"]
+[ext_resource type="PackedScene" path="res://scenes/ui/factory_panel.tscn" id="13_factory"]
 
 [node name="HUD" type="Control"]
 layout_mode = 1
@@ -36,10 +43,22 @@ size_flags_horizontal = 3
 text = "Items: 0"
 
 [node name="Spacer2" type="Control" parent="TopBar/HBox"]
-custom_minimum_size = Vector2(30, 0)
+custom_minimum_size = Vector2(20, 0)
 
 [node name="TierLabel" type="Label" parent="TopBar/HBox"]
 text = "Tier 1"
+
+[node name="LicenseButton" type="Button" parent="TopBar/HBox"]
+custom_minimum_size = Vector2(140, 0)
+text = "Buy License"
+
+[node name="NewItemsIcon" type="Label" parent="TopBar/HBox"]
+visible = false
+text = " NEW! "
+
+[node name="SettingsButton" type="Button" parent="TopBar/HBox"]
+custom_minimum_size = Vector2(40, 0)
+text = "⚙"
 
 [node name="ToolSidebar" parent="." instance=ExtResource("3_sidebar")]
 layout_mode = 1
@@ -70,5 +89,32 @@ layout_mode = 2
 layout_mode = 2
 visible = false
 
+[node name="Investments" parent="BottomPanel" instance=ExtResource("10_invest")]
+layout_mode = 2
+visible = false
+
+[node name="Equipment" parent="BottomPanel" instance=ExtResource("12_equip")]
+layout_mode = 2
+visible = false
+
+[node name="Factories" parent="BottomPanel" instance=ExtResource("13_factory")]
+layout_mode = 2
+visible = false
+
+[node name="Cat" parent="BottomPanel" instance=ExtResource("9_cat")]
+layout_mode = 2
+visible = false
+
+[node name="Progression" parent="BottomPanel" instance=ExtResource("8_progression")]
+layout_mode = 2
+visible = false
+
+[node name="Stats" parent="BottomPanel" instance=ExtResource("7_stats")]
+layout_mode = 2
+visible = false
+
 [node name="ItemCompletePopup" parent="." instance=ExtResource("6_popup")]
+layout_mode = 1
+
+[node name="SettingsPopup" parent="." instance=ExtResource("11_settings")]
 layout_mode = 1

@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="ItemPool" load_steps=7 format=3]
+[gd_resource type="Resource" script_class="ItemPool" load_steps=22 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/item_pool.gd" id="1"]
 [ext_resource type="Resource" path="res://data/resources/items/old_clock.tres" id="2"]
@@ -6,10 +6,25 @@
 [ext_resource type="Resource" path="res://data/resources/items/rusty_lamp.tres" id="4"]
 [ext_resource type="Resource" path="res://data/resources/items/cracked_frame.tres" id="5"]
 [ext_resource type="Resource" path="res://data/resources/items/ornate_box.tres" id="6"]
+[ext_resource type="Resource" path="res://data/resources/items/tarnished_mirror.tres" id="7"]
+[ext_resource type="Resource" path="res://data/resources/items/dirty_keyboard.tres" id="8"]
+[ext_resource type="Resource" path="res://data/resources/items/rusty_toolbox.tres" id="9"]
+[ext_resource type="Resource" path="res://data/resources/items/old_radio.tres" id="10"]
+[ext_resource type="Resource" path="res://data/resources/items/worn_book.tres" id="11"]
+[ext_resource type="Resource" path="res://data/resources/items/dusty_globe.tres" id="12"]
+[ext_resource type="Resource" path="res://data/resources/items/bronze_statue.tres" id="13"]
+[ext_resource type="Resource" path="res://data/resources/items/vintage_camera.tres" id="14"]
+[ext_resource type="Resource" path="res://data/resources/items/war_medal.tres" id="15"]
+[ext_resource type="Resource" path="res://data/resources/items/antique_telescope.tres" id="16"]
+[ext_resource type="Resource" path="res://data/resources/items/egyptian_scarab.tres" id="17"]
+[ext_resource type="Resource" path="res://data/resources/items/aztec_mask.tres" id="18"]
+[ext_resource type="Resource" path="res://data/resources/items/grand_piano.tres" id="19"]
+[ext_resource type="Resource" path="res://data/resources/items/samurai_armor.tres" id="20"]
+[ext_resource type="Resource" path="res://data/resources/items/greek_amphora.tres" id="21"]
 
 [resource]
 script = ExtResource("1")
-tier_1_items = [ExtResource("2"), ExtResource("3"), ExtResource("4"), ExtResource("5"), ExtResource("6")]
+tier_1_items = [ExtResource("2"), ExtResource("3"), ExtResource("4"), ExtResource("5"), ExtResource("6"), ExtResource("7"), ExtResource("8"), ExtResource("9"), ExtResource("10"), ExtResource("11"), ExtResource("12"), ExtResource("13"), ExtResource("14"), ExtResource("15"), ExtResource("16"), ExtResource("17"), ExtResource("18"), ExtResource("19"), ExtResource("20"), ExtResource("21")]
 tier_2_items = []
 rarity_weight_common = 60.0
 rarity_weight_uncommon = 25.0

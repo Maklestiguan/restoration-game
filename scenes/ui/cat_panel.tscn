@@ -1,0 +1,29 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scenes/ui/cat_panel.gd" id="1"]
+
+[node name="Cat" type="VBoxContainer"]
+script = ExtResource("1")
+
+[node name="Header" type="Label" parent="."]
+text = "CAT COMPANION"
+horizontal_alignment = 1
+
+[node name="StatusLabel" type="Label" parent="."]
+text = "Unlock Tier 2 to adopt a workshop cat!"
+
+[node name="BonusesLabel" type="Label" parent="."]
+text = ""
+autowrap_mode = 2
+
+[node name="ItemsLabel" type="Label" parent="."]
+text = ""
+autowrap_mode = 2
+
+[node name="CostLabel" type="Label" parent="."]
+text = ""
+
+[node name="ActionButton" type="Button" parent="."]
+visible = false
+custom_minimum_size = Vector2(250, 45)
+text = "Adopt Cat"

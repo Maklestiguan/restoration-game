@@ -21,6 +21,15 @@ var current_damage_remaining: Dictionary = {}
 var current_tier: int = 1
 var unlocked_item_categories: Array[String] = ["common"]
 
+# --- Кот ---
+var has_cat: bool = false
+var cat_level: int = 0
+
+# --- Копилка ---
+var piggy_bank_balance: float = 0.0
+var piggy_bank_deposit_time: float = 0.0  ## Unix timestamp последнего депозита
+var piggy_bank_deposited: float = 0.0  ## Сумма всех депозитов (для расчёта прибыли)
+
 # --- Ссылки на ресурсы (загружаются при старте) ---
 var economy_config: Resource = null
 var item_pool: Resource = null
@@ -91,7 +100,7 @@ func get_tool_level(tool_id: String) -> int:
 	return tool_levels.get(tool_id, 1)
 
 
-func upgrade_tool(tool_data: Resource) -> bool:
+func upgrade_tool(tool_data: ToolData) -> bool:
 	var level := get_tool_level(tool_data.id)
 	if level >= tool_data.max_level:
 		return false
@@ -103,26 +112,30 @@ func upgrade_tool(tool_data: Resource) -> bool:
 	return true
 
 
-func get_tool_effectiveness(tool_data: Resource) -> float:
+func get_tool_effectiveness(tool_data: ToolData) -> float:
 	var level := get_tool_level(tool_data.id)
-	return tool_data.base_strength * (1.0 + tool_data.strength_per_level * (level - 1))
+	var base := tool_data.base_strength * (1.0 + tool_data.strength_per_level * (level - 1))
+	# Бонус за вехи: +5% за каждые 10 уровней
+	var milestone_bonus := 1.0 + 0.05 * floorf(float(level) / 10.0)
+	return base * milestone_bonus
 
 
-func get_tool_radius(tool_data: Resource) -> int:
+func get_tool_radius(tool_data: ToolData) -> int:
 	var level := get_tool_level(tool_data.id)
-	return tool_data.base_radius + tool_data.radius_per_level * (level - 1)
+	# Радиус растёт, но ограничен 60 (маска 128px, не больше половины)
+	return mini(tool_data.base_radius + tool_data.radius_per_level * (level - 1), 60)
 
 
-func get_upgrade_cost(tool_data: Resource) -> float:
+func get_upgrade_cost(tool_data: ToolData) -> float:
 	var level := get_tool_level(tool_data.id)
 	return _calculate_upgrade_cost(tool_data, level)
 
 
-func _calculate_upgrade_cost(tool_data: Resource, level: int) -> float:
+func _calculate_upgrade_cost(tool_data: ToolData, level: int) -> float:
 	return tool_data.upgrade_cost_base * pow(tool_data.upgrade_cost_scaling, level - 1)
 
 
-func calculate_item_reward(item_data: Resource, _is_manual: bool) -> float:
+func calculate_item_reward(item_data: ItemData, _is_manual: bool) -> float:
 	## Рассчитывает базовую награду за предмет (без "Рука мастера").
 	## Бонус "Рука мастера" применяется отдельно в месте вызова.
 	var base: float = item_data.base_reward
@@ -134,17 +147,41 @@ func calculate_item_reward(item_data: Resource, _is_manual: bool) -> float:
 
 	var reward := base * rarity_mult * tier_bonus
 
+	# Бонус за сложность предмета (★ to ★★★★★)
+	if economy_config and item_data is ItemData:
+		var difficulty: int = item_data.get_difficulty()
+		var diff_idx: int = clampi(difficulty - 1, 0, economy_config.difficulty_bonus.size() - 1)
+		reward *= economy_config.difficulty_bonus[diff_idx]
+
 	if economy_config:
 		reward *= economy_config.global_income_multiplier
+
+	# Рандомизация +/- 10% от базовой цены
+	reward *= randf_range(0.9, 1.1)
 
 	return reward
 
 
 func roll_masters_touch() -> bool:
 	## Проверяет, сработала ли "Рука мастера" (только для ручной реставрации).
+	## Кот увеличивает шанс на cat_masters_touch_per_level за уровень.
 	if economy_config == null:
 		return false
-	return randf() < economy_config.masters_touch_chance
+	var chance: float = economy_config.masters_touch_chance
+	if has_cat and economy_config:
+		chance += float(cat_level) * economy_config.cat_masters_touch_per_level
+	# Бонус от оборудования
+	var EquipmentPanel := preload("res://scenes/ui/equipment_panel.gd")
+	chance += EquipmentPanel.get_masters_touch_bonus()
+	return randf() < chance
+
+
+func get_worker_income_multiplier() -> float:
+	## Множитель дохода работников (кот добавляет бонус).
+	var mult := 1.0
+	if has_cat and economy_config:
+		mult += float(cat_level) * economy_config.cat_worker_bonus_per_level
+	return mult
 
 
 func _get_rarity_multiplier(rarity: int) -> float:
