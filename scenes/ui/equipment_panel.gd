@@ -7,6 +7,8 @@ const EQUIPMENT := [
 	{"id": "chemical_bath", "name": "Chemical Bath", "cost": 30000.0, "desc": "-15% grime resistance", "type": "resist", "target": "grime", "value": 0.15},
 	{"id": "precision_tools", "name": "Precision Tools", "cost": 50000.0, "desc": "+10% Master's Touch chance", "type": "masters_touch", "target": "", "value": 0.10},
 	{"id": "laser_scanner", "name": "Laser Scanner", "cost": 100000.0, "desc": "Show damage % per layer", "type": "qol", "target": "", "value": 0.0},
+	{"id": "fish_tank", "name": "Office Aquarium", "cost": 250000.0, "desc": "+15% factory income", "type": "factory_bonus", "target": "", "value": 0.15},
+	{"id": "piggy_bank", "name": "Piggy Bank", "cost": 5000.0, "desc": "Deposit savings, earn 2%/min interest", "type": "piggy_bank", "target": "", "value": 0.02},
 ]
 
 var _buttons: Dictionary = {}
@@ -15,6 +17,7 @@ var _buttons: Dictionary = {}
 func _ready() -> void:
 	Events.money_changed.connect(func(_a: float) -> void: _update_buttons())
 	Events.game_loaded.connect(_rebuild)
+	Events.tier_unlocked.connect(func(_t: int) -> void: _rebuild())
 	_rebuild()
 
 

@@ -22,13 +22,15 @@ func roll_item(tier: int) -> ItemData:
 	if pool.is_empty():
 		return null
 
-	# Собираем веса по редкости
+	# Собираем веса по редкости (с учётом тира)
 	var weighted_items: Array[ItemData] = []
 	var weights: Array[float] = []
 
 	for item in pool:
-		weighted_items.append(item)
-		weights.append(_get_rarity_weight(item.rarity))
+		var w := _get_rarity_weight(item.rarity, tier)
+		if w > 0:
+			weighted_items.append(item)
+			weights.append(w)
 
 	# Взвешенный случайный выбор
 	var total_weight := 0.0
@@ -52,7 +54,7 @@ func _get_pool_for_tier(tier: int) -> Array[ItemData]:
 	if tier <= 3:
 		min_tier = tier
 	else:
-		min_tier = maxi(1, tier - 2)
+		min_tier = maxi(1, tier - 1)
 	var all_tiers: Array[Array] = [tier_1_items, tier_2_items]
 	var result: Array[ItemData] = []
 	for t in range(min_tier, tier + 1):
@@ -66,10 +68,17 @@ func _get_pool_for_tier(tier: int) -> Array[ItemData]:
 	return result
 
 
-func _get_rarity_weight(rarity: ItemData.Rarity) -> float:
+func _get_rarity_weight(rarity: ItemData.Rarity, tier: int = 1) -> float:
+	## Тир 3+: Common исчезает. Тир 4+: Uncommon тоже исчезает.
 	match rarity:
-		ItemData.Rarity.COMMON: return rarity_weight_common
-		ItemData.Rarity.UNCOMMON: return rarity_weight_uncommon
+		ItemData.Rarity.COMMON:
+			if tier >= 3:
+				return 0.0
+			return rarity_weight_common
+		ItemData.Rarity.UNCOMMON:
+			if tier >= 4:
+				return 0.0
+			return rarity_weight_uncommon
 		ItemData.Rarity.RARE: return rarity_weight_rare
 		ItemData.Rarity.EPIC: return rarity_weight_epic
 		ItemData.Rarity.LEGENDARY: return rarity_weight_legendary

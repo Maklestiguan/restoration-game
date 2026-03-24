@@ -31,16 +31,24 @@ func _process(delta: float) -> void:
 
 func _get_total_passive_income() -> float:
 	var total := 0.0
-	# Workers
+	# Students
 	var config := GameManager.economy_config as EconomyConfig
 	var wc := GameManager.hired_workers.size()
 	if wc > 0 and config:
 		var cat_mult: float = GameManager.get_worker_income_multiplier()
 		total += float(wc) * config.worker_income_per_min * cat_mult
+	# Professionals
+	var pro_count: int = GameManager.tool_levels.get("professionals", 0)
+	if pro_count > 0:
+		var cat_mult_pro: float = GameManager.get_worker_income_multiplier()
+		total += float(pro_count) * 500.0 * cat_mult_pro
 	# Investments
 	total += InvestmentsPanel.get_total_investment_income()
-	# Factories
-	total += FactoryPanel.get_total_factory_income()
+	# Factories (с бонусом аквариума)
+	var factory_income: float = FactoryPanel.get_total_factory_income()
+	if factory_income > 0 and GameManager.tool_levels.has("eq_fish_tank"):
+		factory_income *= 1.15
+	total += factory_income
 	return total
 
 

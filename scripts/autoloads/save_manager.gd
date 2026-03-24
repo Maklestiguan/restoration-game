@@ -32,6 +32,9 @@ func save_game() -> void:
 	data.unlocked_categories = GameManager.unlocked_item_categories.duplicate()
 	data.has_cat = GameManager.has_cat
 	data.cat_level = GameManager.cat_level
+	data.piggy_bank_balance = GameManager.piggy_bank_balance
+	data.piggy_bank_deposit_time = GameManager.piggy_bank_deposit_time
+	data.piggy_bank_deposited = GameManager.piggy_bank_deposited
 
 	# Save worker count (one entry per worker)
 	data.hired_worker_ids = []
@@ -71,6 +74,9 @@ func load_game() -> bool:
 	GameManager.unlocked_item_categories = data.unlocked_categories.duplicate()
 	GameManager.has_cat = data.has_cat
 	GameManager.cat_level = data.cat_level
+	GameManager.piggy_bank_balance = data.piggy_bank_balance
+	GameManager.piggy_bank_deposit_time = data.piggy_bank_deposit_time
+	GameManager.piggy_bank_deposited = data.piggy_bank_deposited
 
 	# Activate cat if owned
 	if GameManager.has_cat:

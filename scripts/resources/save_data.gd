@@ -49,6 +49,14 @@ extends Resource
 ## Уровень кота
 @export var cat_level: int = 0
 
+# --- Копилка ---
+## Баланс копилки
+@export var piggy_bank_balance: float = 0.0
+## Время последнего депозита (Unix)
+@export var piggy_bank_deposit_time: float = 0.0
+## Сумма всех депозитов (для расчёта прибыли)
+@export var piggy_bank_deposited: float = 0.0
+
 # --- Статистика ---
 ## Общее время игры в секундах
 @export var total_play_time_seconds: float = 0.0

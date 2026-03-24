@@ -23,20 +23,21 @@ script = ExtResource("1")
 script = ExtResource("2_office")
 
 [node name="ItemBorder" type="PanelContainer" parent="."]
-offset_left = 697.0
-offset_top = 100.0
-offset_right = 1229.0
-offset_bottom = 510.0
+offset_left = 730.0
+offset_top = 40.0
+offset_right = 1250.0
+offset_bottom = 560.0
 theme_override_styles/panel = SubResource("item_border")
 
 [node name="ItemContainer" type="Control" parent="ItemBorder"]
+offset_top = 60.0
 layout_mode = 2
 
 [node name="ItemNameLabel" type="Label" parent="."]
-offset_left = 697.0
-offset_top = 518.0
-offset_right = 1229.0
-offset_bottom = 548.0
+offset_left = 730.0
+offset_top = 500.0
+offset_right = 1250.0
+offset_bottom = 520.0
 horizontal_alignment = 1
 text = "Loading..."
 

@@ -29,9 +29,9 @@ func _rebuild() -> void:
 		if child.name != "Header":
 			child.queue_free()
 
-	if GameManager.current_tier < 4:
+	if GameManager.current_tier < 3:
 		var locked := Label.new()
-		locked.text = "Unlock Tier 4 to build restoration factories."
+		locked.text = "Unlock Tier 3 to build restoration factories."
 		add_child(locked)
 		return
 

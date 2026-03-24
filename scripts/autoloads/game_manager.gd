@@ -25,6 +25,11 @@ var unlocked_item_categories: Array[String] = ["common"]
 var has_cat: bool = false
 var cat_level: int = 0
 
+# --- Копилка ---
+var piggy_bank_balance: float = 0.0
+var piggy_bank_deposit_time: float = 0.0  ## Unix timestamp последнего депозита
+var piggy_bank_deposited: float = 0.0  ## Сумма всех депозитов (для расчёта прибыли)
+
 # --- Ссылки на ресурсы (загружаются при старте) ---
 var economy_config: Resource = null
 var item_pool: Resource = null

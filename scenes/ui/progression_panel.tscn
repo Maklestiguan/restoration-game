@@ -2,41 +2,53 @@
 
 [ext_resource type="Script" path="res://scenes/ui/progression_panel.gd" id="1"]
 
-[node name="Progression" type="VBoxContainer"]
+[node name="Progression" type="ScrollContainer"]
 script = ExtResource("1")
+mouse_filter = 1
 
-[node name="Header" type="Label" parent="."]
+[node name="Content" type="VBoxContainer" parent="."]
+size_flags_horizontal = 3
+mouse_filter = 1
+
+[node name="Header" type="Label" parent="Content"]
 text = "PROGRESSION"
 horizontal_alignment = 1
+mouse_filter = 1
 
-[node name="TierLabel" type="Label" parent="."]
+[node name="TierLabel" type="Label" parent="Content"]
 text = "Current Tier: 1 / 8"
+mouse_filter = 1
 
-[node name="HSplit" type="HSeparator" parent="."]
+[node name="HSplit" type="HSeparator" parent="Content"]
 
-[node name="CurrentItemsLabel" type="Label" parent="."]
+[node name="CurrentItemsLabel" type="Label" parent="Content"]
 text = "Tier 1 items:"
 autowrap_mode = 2
+mouse_filter = 1
 
-[node name="HSplit2" type="HSeparator" parent="."]
+[node name="HSplit2" type="HSeparator" parent="Content"]
 
-[node name="NextItemsLabel" type="Label" parent="."]
+[node name="NextItemsLabel" type="Label" parent="Content"]
 text = "Tier 2 unlocks:"
 autowrap_mode = 2
+mouse_filter = 1
 
-[node name="HSplit3" type="HSeparator" parent="."]
+[node name="HSplit3" type="HSeparator" parent="Content"]
 
-[node name="DescriptionLabel" type="Label" parent="."]
+[node name="DescriptionLabel" type="Label" parent="Content"]
 text = "Buy a Tier 2 License to access harder, more rewarding items."
 autowrap_mode = 2
+mouse_filter = 1
 
-[node name="CostLabel" type="Label" parent="."]
+[node name="CostLabel" type="Label" parent="Content"]
 text = "License cost: $5,000"
+mouse_filter = 1
 
-[node name="QuestInfo" type="Label" parent="."]
+[node name="QuestInfo" type="Label" parent="Content"]
 text = ""
 autowrap_mode = 2
+mouse_filter = 1
 
-[node name="ActionButton" type="Button" parent="."]
+[node name="ActionButton" type="Button" parent="Content"]
 custom_minimum_size = Vector2(250, 45)
 text = "Buy License"

@@ -8,7 +8,7 @@ const DAMAGE_SHADER := preload("res://shaders/damage_reveal.gdshader")
 # Размер текстуры предмета (и масок) — 128x128 для пиксель-арта
 const ITEM_SIZE := Vector2i(128, 128)
 
-# Размер отображения — фиксированный, совпадает с контейнером в workshop.tscn
+# Размер отображения — фиксированный квадрат внутри контейнера
 const DISPLAY_SIZE := 400.0
 var display_scale := Vector2(DISPLAY_SIZE / 128.0, DISPLAY_SIZE / 128.0)
 
@@ -55,7 +55,6 @@ func setup_item(data: ItemData) -> void:
 	if current_tool == null and GameManager.all_tools.size() > 0:
 		current_tool = GameManager.all_tools[0]
 
-
 	# Очищаем предыдущие слои
 	for child in damage_layer_container.get_children():
 		child.queue_free()
@@ -78,7 +77,7 @@ func setup_item(data: ItemData) -> void:
 		item_shape.resize(ITEM_SIZE.x, ITEM_SIZE.y)
 
 	# Центрируем и масштабируем предмет чтобы заполнить весь контейнер
-	var center := Vector2(DISPLAY_SIZE, DISPLAY_SIZE) / 2.0
+	var center := Vector2(DISPLAY_SIZE, DISPLAY_SIZE) / 2
 	clean_sprite.position = center
 	clean_sprite.scale = display_scale
 
@@ -107,7 +106,7 @@ func _setup_damage_layer(layer: DamageLayer) -> void:
 
 	# Создаём спрайт наложения повреждения
 	var sprite := Sprite2D.new()
-	var center := Vector2(DISPLAY_SIZE, DISPLAY_SIZE) / 2.0
+	var center := Vector2(DISPLAY_SIZE, DISPLAY_SIZE) / 2
 	sprite.position = center
 	sprite.scale = display_scale
 

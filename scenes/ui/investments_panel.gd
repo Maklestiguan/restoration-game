@@ -26,11 +26,22 @@ func _process(delta: float) -> void:
 	if _refresh_timer >= 2.0:
 		_refresh_timer = 0.0
 		_refresh_buttons()
+		_update_piggy_display()
+
+
+var _piggy_balance_label: Label = null
+var _piggy_time_label: Label = null
+var _piggy_withdraw_btn: Button = null
+var _deposit_buttons: Array[Button] = []
 
 
 func _rebuild() -> void:
 	for child in content.get_children():
 		child.queue_free()
+	_piggy_balance_label = null
+	_piggy_time_label = null
+	_piggy_withdraw_btn = null
+	_deposit_buttons.clear()
 
 	for inv: Dictionary in INVESTMENTS:
 		var id: String = inv["id"]
@@ -69,6 +80,132 @@ func _rebuild() -> void:
 		buy_btn.disabled = GameManager.money < cost
 		buy_btn.pressed.connect(_on_buy.bind(id, inv))
 		hbox.add_child(buy_btn)
+
+	# --- Piggy Bank section (всегда показываем) ---
+	_build_piggy_bank_section()
+
+
+func _build_piggy_bank_section() -> void:
+	var owned := GameManager.tool_levels.has("eq_piggy_bank")
+
+	var sep := HSeparator.new()
+	content.add_child(sep)
+
+	var title := Label.new()
+	title.text = "PIGGY BANK"
+	title.add_theme_font_size_override("font_size", 18)
+	title.add_theme_color_override("font_color", Color(0.9, 0.7, 0.75))
+	title.mouse_filter = Control.MOUSE_FILTER_PASS
+	content.add_child(title)
+
+	if not owned:
+		var locked := Label.new()
+		locked.text = "Buy Piggy Bank from Equipment tab to unlock savings."
+		locked.add_theme_font_size_override("font_size", 15)
+		locked.add_theme_color_override("font_color", Color(0.6, 0.55, 0.5))
+		locked.mouse_filter = Control.MOUSE_FILTER_PASS
+		content.add_child(locked)
+		return
+
+	_piggy_balance_label = Label.new()
+	_piggy_balance_label.mouse_filter = Control.MOUSE_FILTER_PASS
+	content.add_child(_piggy_balance_label)
+
+	_piggy_time_label = Label.new()
+	_piggy_time_label.add_theme_font_size_override("font_size", 15)
+	_piggy_time_label.add_theme_color_override("font_color", Color(0.7, 0.67, 0.6))
+	_piggy_time_label.mouse_filter = Control.MOUSE_FILTER_PASS
+	content.add_child(_piggy_time_label)
+
+	# Deposit buttons
+	var dep_hbox := HBoxContainer.new()
+	dep_hbox.mouse_filter = Control.MOUSE_FILTER_PASS
+	content.add_child(dep_hbox)
+	_deposit_buttons.clear()
+	for amount in [100.0, 1000.0, 10000.0]:
+		var btn := Button.new()
+		btn.text = "Deposit $%s" % Format.money(amount)
+		btn.custom_minimum_size = Vector2(140, 36)
+		btn.pressed.connect(_on_piggy_deposit.bind(amount))
+		dep_hbox.add_child(btn)
+		_deposit_buttons.append(btn)
+
+	# Withdraw button
+	_piggy_withdraw_btn = Button.new()
+	_piggy_withdraw_btn.custom_minimum_size = Vector2(200, 40)
+	_piggy_withdraw_btn.pressed.connect(_on_piggy_withdraw)
+	content.add_child(_piggy_withdraw_btn)
+
+	_update_piggy_display()
+
+
+func _update_piggy_display() -> void:
+	if _piggy_balance_label == null:
+		return
+	var balance: float = GameManager.piggy_bank_balance
+	var deposited: float = GameManager.piggy_bank_deposited
+	var profit: float = maxf(balance - deposited, 0.0)
+
+	if balance > 0:
+		_piggy_balance_label.text = "Balance: $%s  (profit: +$%s)" % [Format.money(balance), Format.money(profit)]
+	else:
+		_piggy_balance_label.text = "Balance: $0  —  Deposit money to earn 2%/min compound interest."
+
+	var elapsed := 0.0
+	if GameManager.piggy_bank_deposit_time > 0:
+		elapsed = Time.get_unix_time_from_system() - GameManager.piggy_bank_deposit_time
+	var mins := int(elapsed / 60.0)
+	var secs := int(elapsed) % 60
+	if balance > 0:
+		if elapsed < 300.0:
+			_piggy_time_label.text = "Time: %dm %ds  (10%% penalty for %ds more)" % [mins, secs, int(300.0 - elapsed)]
+		else:
+			_piggy_time_label.text = "Time: %dm %ds  (mature — no penalty!)" % [mins, secs]
+	else:
+		_piggy_time_label.text = ""
+
+	# Update deposit button states
+	for i in _deposit_buttons.size():
+		var amounts := [100.0, 1000.0, 10000.0]
+		if i < amounts.size():
+			_deposit_buttons[i].disabled = GameManager.money < amounts[i]
+
+	# Withdraw button
+	if balance > 0:
+		if elapsed < 300.0:
+			var penalty_amount: float = balance * 0.1
+			var payout: float = balance - penalty_amount
+			_piggy_withdraw_btn.text = "Withdraw $%s (-$%s penalty)" % [Format.money(payout), Format.money(penalty_amount)]
+		else:
+			_piggy_withdraw_btn.text = "Withdraw $%s (full)" % Format.money(balance)
+		_piggy_withdraw_btn.disabled = false
+	else:
+		_piggy_withdraw_btn.text = "Nothing to withdraw"
+		_piggy_withdraw_btn.disabled = true
+
+
+func _on_piggy_deposit(amount: float) -> void:
+	if GameManager.spend_money(amount, "piggy_deposit"):
+		GameManager.piggy_bank_balance += amount
+		GameManager.piggy_bank_deposited += amount
+		if GameManager.piggy_bank_deposit_time <= 0:
+			GameManager.piggy_bank_deposit_time = Time.get_unix_time_from_system()
+		_update_piggy_display()
+
+
+func _on_piggy_withdraw() -> void:
+	var balance: float = GameManager.piggy_bank_balance
+	if balance <= 0:
+		return
+	var elapsed: float = Time.get_unix_time_from_system() - GameManager.piggy_bank_deposit_time
+	var payout: float = balance
+	if elapsed < 300.0:
+		payout *= 0.9  # 10% penalty
+	GameManager.piggy_bank_balance = 0.0
+	GameManager.piggy_bank_deposit_time = 0.0
+	GameManager.piggy_bank_deposited = 0.0
+	GameManager.add_money(payout, "piggy_withdraw")
+	_update_piggy_display()
 
 
 func _on_buy(id: String, inv: Dictionary) -> void:

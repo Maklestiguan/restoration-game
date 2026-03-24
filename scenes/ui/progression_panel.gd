@@ -1,4 +1,4 @@
-extends VBoxContainer
+extends ScrollContainer
 ## Progression tab — buy licenses to unlock higher tier items.
 ## Shows current tier items and what next tier unlocks.
 
@@ -7,13 +7,13 @@ enum State { IDLE, LICENSE_AVAILABLE, QUEST_ACTIVE, COMPLETED }
 var _state: int = State.IDLE
 var _quest_item: ItemData = null
 
-@onready var tier_label: Label = $TierLabel
-@onready var current_items_label: Label = $CurrentItemsLabel
-@onready var next_items_label: Label = $NextItemsLabel
-@onready var description_label: Label = $DescriptionLabel
-@onready var cost_label: Label = $CostLabel
-@onready var action_button: Button = $ActionButton
-@onready var quest_info: Label = $QuestInfo
+@onready var tier_label: Label = $Content/TierLabel
+@onready var current_items_label: Label = $Content/CurrentItemsLabel
+@onready var next_items_label: Label = $Content/NextItemsLabel
+@onready var description_label: Label = $Content/DescriptionLabel
+@onready var cost_label: Label = $Content/CostLabel
+@onready var action_button: Button = $Content/ActionButton
+@onready var quest_info: Label = $Content/QuestInfo
 
 
 func _ready() -> void:
@@ -48,6 +48,8 @@ func _buy_license() -> void:
 		_state = State.QUEST_ACTIVE
 		_quest_item = _generate_quest_item()
 		_update_display()
+		# Автозапуск квестового предмета
+		_start_quest_restoration()
 
 
 func _on_item_restored(item_data: Resource, _reward: float, _masterwork: bool) -> void:
