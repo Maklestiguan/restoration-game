@@ -30,6 +30,11 @@ extends Resource
 ## Множитель награды при срабатывании "Рука мастера" (2.0 = двойная награда)
 @export var masters_touch_multiplier: float = 2.0
 
+# --- Сложность предметов ---
+## Бонус награды за уровень сложности (★ to ★★★★★).
+## Индекс 0 = ★ (1.0x), индекс 4 = ★★★★★ (1.8x)
+@export var difficulty_bonus: Array[float] = [1.0, 1.15, 1.3, 1.5, 1.8]
+
 # --- Оффлайн-прогресс ---
 ## Эффективность работников в оффлайне (0.5 = 50% от онлайн-скорости)
 @export var offline_efficiency: float = 0.5
@@ -58,6 +63,20 @@ extends Resource
 ## Сила удаления повреждения за одно касание кистью (базовое значение).
 ## При значении 0.5 центр кисти убирает ~50% повреждения за касание.
 @export var base_removal_rate: float = 0.5
+
+# --- Кот-компаньон ---
+## Базовая стоимость покупки кота
+@export var cat_base_cost: float = 1000.0
+
+## Стоимость улучшения кота: base * (scaling ^ level). Дорого — кот того стоит!
+@export var cat_upgrade_cost_base: float = 2000.0
+@export var cat_upgrade_cost_scaling: float = 1.5
+
+## Бонус "Рука мастера" за уровень кота (+1% шанс за уровень)
+@export var cat_masters_touch_per_level: float = 0.01
+
+## Бонус дохода работников за уровень кота (+5% за уровень)
+@export var cat_worker_bonus_per_level: float = 0.05
 
 # --- Стартовые деньги ---
 ## Количество денег в начале новой игры

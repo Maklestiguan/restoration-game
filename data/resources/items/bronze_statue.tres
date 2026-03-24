@@ -1,0 +1,41 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/item_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/resources/damage_layer.gd" id="2"]
+[ext_resource type="Texture2D" path="res://assets/sprites/items/bronze_statue_clean.png" id="3"]
+
+[sub_resource type="Resource" id="layer_rust"]
+script = ExtResource("2")
+damage_type_id = "rust"
+intensity = 0.8
+overlay_offset = Vector2(0, 0)
+overlay_scale = 1.0
+depth = 2
+
+[sub_resource type="Resource" id="layer_grime"]
+script = ExtResource("2")
+damage_type_id = "grime"
+intensity = 0.7
+overlay_offset = Vector2(0.3, 0.2)
+overlay_scale = 1.0
+depth = 2
+
+[sub_resource type="Resource" id="layer_cracks"]
+script = ExtResource("2")
+damage_type_id = "cracks"
+intensity = 0.5
+overlay_offset = Vector2(0.1, 0.4)
+overlay_scale = 1.0
+depth = 1
+
+[resource]
+script = ExtResource("1")
+id = "bronze_statue"
+display_name = "Bronze Statue"
+description = "A small bronze figurine with patina."
+rarity = 1
+category = "antique"
+clean_texture = ExtResource("3")
+base_reward = 220.0
+damage_layers = [SubResource("layer_rust"), SubResource("layer_grime"), SubResource("layer_cracks")]
+required_tier = 1

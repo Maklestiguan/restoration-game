@@ -3,22 +3,99 @@ extends Control
 
 @onready var items_counter: Label = $TopBar/HBox/ItemsCounter
 @onready var tier_label: Label = $TopBar/HBox/TierLabel
+@onready var license_button: Button = $TopBar/HBox/LicenseButton
+@onready var new_items_icon: Label = $TopBar/HBox/NewItemsIcon
+@onready var bottom_panel: TabContainer = $BottomPanel
+@onready var settings_button: Button = $TopBar/HBox/SettingsButton
+@onready var settings_popup = $SettingsPopup
+
+var _new_icon_blink: float = 0.0
 
 
 func _ready() -> void:
 	_apply_theme()
 	Events.item_restored.connect(_on_item_restored)
+	Events.tier_unlocked.connect(_on_tier_unlocked)
+	Events.game_loaded.connect(_on_game_loaded)
+	license_button.pressed.connect(_on_license_pressed)
+	settings_button.pressed.connect(_on_settings_pressed)
+	settings_popup.setup(self)
+	_update_counters()
+	_update_license_button()
+
+
+func _on_settings_pressed() -> void:
+	settings_popup.visible = not settings_popup.visible
+
+
+func _process(delta: float) -> void:
+	# Мигание иконки NEW
+	if new_items_icon.visible:
+		_new_icon_blink += delta * 3.0
+		var alpha := 0.6 + 0.4 * sin(_new_icon_blink)
+		new_items_icon.modulate = Color(1, 0.9, 0.3, alpha)
+
+
+func _on_license_pressed() -> void:
+	# Переключаемся на вкладку Progression
+	for i in bottom_panel.get_tab_count():
+		if bottom_panel.get_tab_title(i) == "Progression":
+			bottom_panel.current_tab = i
+			break
+
+
+func _on_tier_unlocked(_tier: int) -> void:
+	_update_counters()
+	_update_license_button()
+	# Показываем иконку NEW
+	new_items_icon.visible = true
+	_new_icon_blink = 0.0
+	# Скрываем через 10 секунд
+	get_tree().create_timer(10.0).timeout.connect(func() -> void: new_items_icon.visible = false)
+
+
+func _on_item_restored(_item: Resource, _reward: float, _masterwork: bool) -> void:
 	_update_counters()
 
 
+func _on_game_loaded() -> void:
+	_update_counters()
+	_update_license_button()
+
+
+func _update_counters() -> void:
+	items_counter.text = "Items: %d" % GameManager.items_restored
+	tier_label.text = "Tier %d" % GameManager.current_tier
+
+
+func _update_license_button() -> void:
+	var config := GameManager.economy_config as EconomyConfig
+	if config == null:
+		license_button.visible = false
+		return
+
+	if GameManager.current_tier >= 8:
+		license_button.text = "MAX TIER"
+		license_button.disabled = true
+		return
+
+	var next_tier := GameManager.current_tier + 1
+	var cost: float
+	if next_tier < config.tier_unlock_costs.size():
+		cost = config.tier_unlock_costs[next_tier]
+	else:
+		cost = config.tier_unlock_costs[-1] * pow(3.0, next_tier - config.tier_unlock_costs.size() + 1)
+
+	license_button.text = "Tier %d: $%s" % [next_tier, Format.money(cost)]
+	license_button.tooltip_text = "Open Progression tab to buy Tier %d license" % next_tier
+
+
 func _apply_theme() -> void:
-	# Пробуем загрузить тему из файла, если сгенерирована
 	var theme_path := "res://assets/themes/game_theme.tres"
 	if ResourceLoader.exists(theme_path):
 		theme = load(theme_path)
 		return
 
-	# Иначе создаём минимальную тему в коде
 	var t := Theme.new()
 	t.set_default_font_size(22)
 	t.set_font_size("font_size", "Label", 22)
@@ -80,12 +157,3 @@ func _apply_theme() -> void:
 	t.set_constant("separation", "VBoxContainer", 6)
 
 	theme = t
-
-
-func _on_item_restored(_item: Resource, _reward: float, _masterwork: bool) -> void:
-	_update_counters()
-
-
-func _update_counters() -> void:
-	items_counter.text = "Items: %d" % GameManager.items_restored
-	tier_label.text = "Tier %d" % GameManager.current_tier

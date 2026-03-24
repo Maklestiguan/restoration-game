@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/item_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/resources/damage_layer.gd" id="2"]
+[ext_resource type="Texture2D" path="res://assets/sprites/items/worn_book_clean.png" id="3"]
+
+[sub_resource type="Resource" id="layer_dust"]
+script = ExtResource("2")
+damage_type_id = "dust"
+intensity = 0.7
+overlay_offset = Vector2(0, 0)
+overlay_scale = 1.0
+depth = 1
+
+[sub_resource type="Resource" id="layer_cracks"]
+script = ExtResource("2")
+damage_type_id = "cracks"
+intensity = 0.5
+overlay_offset = Vector2(0.2, 0.5)
+overlay_scale = 1.0
+depth = 1
+
+[resource]
+script = ExtResource("1")
+id = "worn_book"
+display_name = "Worn Book"
+description = "A leather-bound book with cracked spine."
+rarity = 0
+category = "everyday"
+clean_texture = ExtResource("3")
+base_reward = 70.0
+damage_layers = [SubResource("layer_dust"), SubResource("layer_cracks")]
+required_tier = 1

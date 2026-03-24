@@ -38,8 +38,8 @@ func _get_worker_count() -> int:
 
 func _get_hire_cost() -> float:
 	var config := GameManager.economy_config as EconomyConfig
-	var base: float = 500.0
-	var scaling: float = 1.4
+	var base: float = 300.0
+	var scaling: float = 1.15
 	if config:
 		base *= config.global_cost_multiplier
 	return base * pow(scaling, _get_worker_count())

@@ -46,12 +46,23 @@ func roll_item(tier: int) -> ItemData:
 
 
 func _get_pool_for_tier(tier: int) -> Array[ItemData]:
-	# Все предметы до текущего тира включительно
+	## Тиры 1-3: только текущий тир (низкие тиры слишком слабые).
+	## Тиры 4+: окно tier-2 до tier.
+	var min_tier: int
+	if tier <= 3:
+		min_tier = tier
+	else:
+		min_tier = maxi(1, tier - 2)
+	var all_tiers: Array[Array] = [tier_1_items, tier_2_items]
 	var result: Array[ItemData] = []
-	if tier >= 1:
-		result.append_array(tier_1_items)
-	if tier >= 2:
-		result.append_array(tier_2_items)
+	for t in range(min_tier, tier + 1):
+		if t >= 1 and t <= all_tiers.size():
+			for item: ItemData in all_tiers[t - 1]:
+				if item.required_tier <= tier:
+					result.append(item)
+	if result.is_empty():
+		for item: ItemData in tier_1_items:
+			result.append(item)
 	return result
 
 

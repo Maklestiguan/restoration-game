@@ -43,6 +43,12 @@ extends Resource
 ## Разблокированные категории предметов
 @export var unlocked_categories: Array[String] = []
 
+# --- Кот ---
+## Есть ли кот
+@export var has_cat: bool = false
+## Уровень кота
+@export var cat_level: int = 0
+
 # --- Статистика ---
 ## Общее время игры в секундах
 @export var total_play_time_seconds: float = 0.0
